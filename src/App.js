@@ -15,8 +15,14 @@ axios.interceptors.response.use(null, error=>{
 
 class App extends Component { 
   state = {
-    posts: []
+    posts: [],
+    title: '',
+    body: ''
   };
+
+  handleChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
 
   async componentDidMount(){
    const promise = await axios.get('https://jsonplaceholder.typicode.com/posts');
@@ -27,12 +33,19 @@ class App extends Component {
   }
 
   handleAdd = async() => {
-    const obj ={ title: 'a', body: 'b' };
-    const {data: post} = await axios.post('https://jsonplaceholder.typicode.com/posts',obj);
-    const posts = [post, ...this.state.posts];
-    this.setState({
-      posts
-    })
+    console.log(this.state.title+" "+this.state.body);
+    const obj ={ title: this.state.title, body: this.state.body };
+    try{
+      const {data: post} = await axios.post('https://jsonplaceholder.typicode.com/posts',obj);
+      const posts = [post, ...this.state.posts];
+      this.setState({
+        posts
+      })
+    }
+    catch(e){
+      alert("Something went wrong "+e);
+    }   
+    
   };
 
   handleUpdate = async post => {
@@ -70,6 +83,8 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
+        <input type="text" name="title" placeholder="title" value={this.state.title} onChange={this.handleChange} />
+        <input type="text" name="body" placeholder="body" value={this.state.body} onChange={this.handleChange} />
         <button className="btn btn-primary" onClick={this.handleAdd}>
           Add
         </button>
